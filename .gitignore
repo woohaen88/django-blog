@@ -383,3 +383,4 @@ poetry.toml
 
 # custom
 haha.txt
+*/migrations/0*.py
