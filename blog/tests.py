@@ -196,3 +196,41 @@ class TestView(TestCase):
         self.assertIn(self.post_001.title, main_area.text)
         self.assertNotIn(self.post_002.title, main_area.text)
         self.assertNotIn(self.post_003.title, main_area.text)
+
+    def test_create_post(self):
+        """
+        1.1. 로그인하지 않으면 status_code가 200이면 안됨
+
+        2.1. 로그인을 한다.
+        2.2. /blog/create_post/ URL로 방문자가 접근하면 포스트 작성 페이지가 정상적으로 열려야함
+        2.3. 웹브라우저의 타이틀은 Create Post - Blog
+        2.4. Create New Post 문구가 있어야함
+        """
+        response = self.client.get("/blog/create_post/")
+        self.assertNotEqual(response.status_code, 200)
+
+        # login
+        self.client.login(
+            username="one",
+            password="test123!@#",
+        )
+
+        response = self.client.get("/blog/create_post/")
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        self.assertEqual("Create Post - Blog", soup.find("title").text.strip())
+        main_area = soup.find("div", id="main-area")
+        self.assertIn("Create New Post", main_area.text)
+
+        self.client.post(
+            "/blog/create_post/",
+            {
+                "title": "Post Form 만들기",
+                "content": "Post Form 페이지를 만듭시다.",
+            },
+        )
+
+        last_post = Post.objects.last()
+        self.assertEqual(last_post.title, "Post Form 만들기")
+        self.assertEqual(last_post.author.username, "one")
