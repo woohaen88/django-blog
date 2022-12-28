@@ -11,6 +11,10 @@ Create Post - Blog
     <form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% bootstrap_form form %}
+        <tr>
+            <th><label for="id_tags_str">Tags:</label></th>
+            <td><input type="text" name="tags_str" id="id_tags_str"></td>
+        </tr>
 
     <button type="submit" class="btn btn-secondary float-right">Submit</button>
     </form>
