@@ -41,10 +41,11 @@
                     {% endif %}
 
                 </section>
-            {% if user.is_authenticated and user == post.author %}
-                <a href="/blog/update_post/{{ post.pk }}/" class="btn btn-info btn-sm float-right" role="button">Edit Post</a>
+                {% if user.is_authenticated and user == post.author %}
+                    <a href="/blog/update_post/{{ post.pk }}/" class="btn btn-info btn-sm float-right" role="button">Edit
+                        Post</a>
 
-            {% endif %}
+                {% endif %}
             </article>
         </div>
 
@@ -54,16 +55,18 @@
                 <div class="card bg-light">
                     <div class="card-body">
                         <!-- Comment form-->
-                    {% if user.is_authenticated %}
-                        <form class="mb-4" method="post" action="{{ post.get_absolute_url }}new_comment/"><textarea class="form-control" rows="3"
-                                                     placeholder="Join the discussion and leave a comment!"></textarea>
-                            {% csrf_token %}
-                        {{ comment_form }}
-                        <button type="submit">확인</button>
-                        </form>
+                        {% if user.is_authenticated %}
+                            <form class="mb-4" method="post" action="{{ post.get_absolute_url }}new_comment/"><textarea
+                                    class="form-control" rows="3"
+                                    placeholder="Join the discussion and leave a comment!"></textarea>
+                                {% csrf_token %}
+                                {{ comment_form }}
+                                <button type="submit">확인</button>
+                            </form>
                         {% else %}
-                        <a href="#" role="button" class="btn btn-outline-dark btn-block btn-sm" data-toggle="modal" data-target="#loginModal">Log in and leave a comment</a>
-                    {% endif %}
+                            <a href="#" role="button" class="btn btn-outline-dark btn-block btn-sm" data-toggle="modal"
+                               data-target="#loginModal">Log in and leave a comment</a>
+                        {% endif %}
                         <!-- Comment with nested comments-->
                         <div class="d-flex mb-4">
                             <!-- Parent comment-->
@@ -74,9 +77,9 @@
                             {% if post.comment_set.exists %}
                                 {% for comment in post.comment_set.iterator %}
                                     <div class="ms-3">
-                                <div class="fw-bold">{{ comment.author.username }}</div>
-                                        {{ comment.content}}
-                                </div>
+                                        <div class="fw-bold">{{ comment.author.username }}</div>
+                                        {{ comment.content }}
+                                    </div>
                                     <div>{{ comment.created_at }}</div>
 
                                 {% endfor %}
