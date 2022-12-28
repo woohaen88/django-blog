@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(max_length=200, unique=True, allow_unicode=True, blank=True)
@@ -15,6 +16,7 @@ class Category(models.Model):
 
     def get_absolute_url(self):
         return f"/blog/{self.slug}/"
+
 
 class Post(models.Model):
     title = models.CharField(max_length=30)
@@ -33,4 +35,3 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return f"/blog/{self.pk}/"
-

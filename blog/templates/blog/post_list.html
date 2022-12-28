@@ -6,7 +6,7 @@
         <!-- Featured blog post-->
         {% if post_list.exists %}
             {% for p in post_list %}
-                <div class="card mb-4">
+                <div class="card mb-4" id="post-{{ p.pk }}">
                     {% if p.head_image %}
                         <a href="#!"><img class="card-img-top img-fluid rounded" src="{{ p.head_image }}"
                                           alt="..."/></a>
@@ -17,6 +17,11 @@
 
                     <div class="card-body">
                         <div class="small text-muted">{{ p.created_at }}</div>
+                        {% if p.category %}
+                            <span class="badge badge-secondary float-right">{{ p.category }}</span>
+                        {% else %}
+                            <span class="badge badge-secondary float-right">미분류</span>
+                        {% endif %}
                         <h2 class="card-title">{{ p.title }}</h2>
                         <p class="card-text">{{ p.content | truncatechars:100 }}</p>
                         <a class="btn btn-primary" href="{{ p.get_absolute_url }}">Read more →</a>
@@ -27,7 +32,7 @@
                 </div>
             {% endfor %}
         {% else %}
-            <h3>아직 게시물이 없습니다</h3>
+            <h3>아직 게시물이 없습니다.</h3>
         {% endif %}
     </div>
 {% endblock %}
