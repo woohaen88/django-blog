@@ -1,11 +1,24 @@
 from django.test import TestCase, Client
 from bs4 import BeautifulSoup
 from .models import Post
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 class TestView(TestCase):
     def setUp(self):
         self.client = Client()
+        self.user_one = User.objects.create_user(
+            username="one",
+            password="test123!@#",
+        )
+        self.user_two = User.objects.create_user(
+            username="two",
+            password="test123!@#",
+        )
+
+
+
 
     def navbar_test(self, soup):
         navbar = soup.nav
@@ -50,8 +63,8 @@ class TestView(TestCase):
         self.assertIn("아직 게시물이 없습니다", main_area.text)
 
         # 3.1. 게시물이 2개 있다면
-        post_001 = Post.objects.create(title="1", content="1")
-        post_002 = Post.objects.create(title="2", content="2")
+        post_001 = Post.objects.create(title="1", content="1", author=self.user_one,)
+        post_002 = Post.objects.create(title="2", content="2", author=self.user_two,)
         self.assertEqual(Post.objects.count(), 2)
 
         # 3.2. 포스트 목록 페이지를 새로고침했을 때
@@ -64,10 +77,12 @@ class TestView(TestCase):
         self.assertIn(post_002.title, main_area.text)
         # 3.4. '아직 게시물이 없습니다.'라는 문구는 더 이상 보이지 않는다.
         self.assertNotIn("아직 게시물이 없습니다", main_area.text)
+        self.assertIn(self.user_one.username.upper(), main_area.text)
+        self.assertIn(self.user_two.username.upper(), main_area.text)
 
     def test_post_detail(self):
         # 1.1. 포스트가 하나 있다.
-        post_001 = Post.objects.create(title="1", content="1")
+        post_001 = Post.objects.create(title="1", content="1", author=self.user_one,)
         # 1.2. 포스트의 url은 '/blog/1/'이다.
         self.assertEqual(post_001.get_absolute_url(), "/blog/1/")
 
@@ -88,7 +103,8 @@ class TestView(TestCase):
         post_area = main_area.find("div", id="post-area")
         self.assertIn(post_001.title, post_area.text)
 
-        # 2.5. 첫번째 포스트의 작성자가 포스트 영역에 있다.(미구현)
+        # 2.5. 첫번째 포스트의 작성자가 포스트 영역에 있다.
+        self.assertIn(post_001.author.username.upper(), post_area.text)
 
         # 2.6. 첫 번재 포스트의 내용이 포스트 영역에 있다.
         self.assertIn(post_001.content, post_area.text)
